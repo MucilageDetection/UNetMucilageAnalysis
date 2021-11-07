@@ -1,6 +1,7 @@
 from collections import defaultdict
 import torch.nn.functional as F
 from DiceLoss import dice_loss
+import os
 import time
 import copy
 import torch
@@ -26,7 +27,7 @@ def print_metrics(metrics, epoch_samples, phase):
 
     print("{}: {}".format(phase, ", ".join(outputs)))
 
-def train_model(model, optimizer, scheduler, dataloaders, device, num_epochs=25):
+def train_model(model, optimizer, scheduler, dataloaders, device, num_epochs=25, outputPath=''):
     best_model_wts = copy.deepcopy(model.state_dict())
     best_loss = 1e10
 
@@ -78,7 +79,7 @@ def train_model(model, optimizer, scheduler, dataloaders, device, num_epochs=25)
                 print("saving best model")
                 best_loss = epoch_loss
                 best_model_wts = copy.deepcopy(model.state_dict())
-                torch.save(best_model_wts, 'bestModel')
+                torch.save(best_model_wts, os.path.join(outputPath, 'bestModel'))
             
             # change the scheduler parameters
             scheduler.step()
@@ -89,7 +90,7 @@ def train_model(model, optimizer, scheduler, dataloaders, device, num_epochs=25)
             'model_state_dict': model.state_dict(),
             'optimizer_state_dict': optimizer.state_dict(),
             'loss': epoch_loss,
-        }, 'trainedModel')
+        }, os.path.join(outputPath, 'trainedModel'))
         
         time_elapsed = time.time() - since
         print('{:.0f}m {:.0f}s'.format(time_elapsed // 60, time_elapsed % 60))
