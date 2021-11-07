@@ -1,8 +1,9 @@
 .idea
 .tmp*
+.ipynb*
 __pycache__
 outputs
 patches
 models
 venv
-secrets.py
+dbsecrets.py
