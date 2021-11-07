@@ -45,10 +45,10 @@ class SentinelPatchLoader(Dataset):
         return [image, label]
 
 class SentinelTestDataset(Dataset):
-    def __init__(self, filepath, filename, cropZone, windowWidth, transform=None):
+    def __init__(self, filename, cropZone, windowWidth, transform=None):
         # create input image names and mask names
         # S2A_MSIL2A_20210402T085551_N0300_R007_T35TPF_20210402T133128
-        self.input = os.path.join(filepath, filename + '.mat')
+        self.input = filename
         BandData = sio.loadmat(self.input)['BandData']
         BandData = BandData[cropZone[1]:cropZone[3], cropZone[0]:cropZone[2], :]
         
