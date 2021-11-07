@@ -1,14 +1,14 @@
 # download test files from dropbox
 import os
 import dropbox
-import secrets
+import dbsecrets
 
 # checks that the given image is in the path, if not adds it to 'tempImage' path
 def GetTestImagePath(folderPath, filePath, fileName):
     targetImageName = os.path.join(folderPath, filePath, fileName)
     
     if not os.path.exists(targetImageName):
-        dbx = dropbox.Dropbox(secrets.dropbox_access_token)
+        dbx = dropbox.Dropbox(dbsecrets.dropbox_access_token)
         files = dbx.files_list_folder(filePath, recursive=True).entries
         
         # create output directory
