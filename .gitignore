@@ -1,6 +1,8 @@
 .idea
+.tmp*
 __pycache__
 outputs
+patches
 models
 venv
-
+secrets.py
