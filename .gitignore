@@ -7,3 +7,4 @@ patches
 models
 venv
 dbsecrets.py
+model_outputs
