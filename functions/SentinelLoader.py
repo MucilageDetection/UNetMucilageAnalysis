@@ -2,7 +2,7 @@ from torch.utils.data import Dataset
 import scipy.io as sio
 import os
 import numpy as np
-from patchify import patchify
+from ImagePatchHandler import ImagePatchHandler
 
 class SentinelPatchLoader(Dataset):
     def __init__(self, filepath, filenames, batchCount, dataAugmentationTypes, loadAtOnce = False, transform=None):
@@ -63,7 +63,7 @@ class SentinelPatchLoader(Dataset):
         return [image, label]
 
 class SentinelTestDataset(Dataset):
-    def __init__(self, filename, cropZone, windowWidth, transform=None):
+    def __init__(self, filename, cropZone, patchHandler, transform=None):
         # create input image names and mask names
         # S2A_MSIL2A_20210402T085551_N0300_R007_T35TPF_20210402T133128
         self.input = filename
@@ -71,25 +71,21 @@ class SentinelTestDataset(Dataset):
         BandData = BandData[cropZone[1]:cropZone[3], cropZone[0]:cropZone[2], :]
         
         # now find all the windows
-        self.patchSize = (windowWidth, windowWidth, BandData.shape[2])
-        self.patches = patchify(BandData, self.patchSize, windowWidth)
-        
+        self.patchHandler = patchHandler
+        self.bandData = self.patchHandler.GetPaddedImage(BandData)
+
         # think about the transform later
         self.transform = transform
     
     def __len__(self):
-        return self.patches.shape[0] * self.patches.shape[1]
+        return self.patchHandler.GetNumberOfPatches()
     
     def __getitem__(self, idx):
-        # get the subscript
-        rows = int(idx / self.patches.shape[1])
-        cols = int(idx % self.patches.shape[1])
-        # print(f'{rows,cols}')
         # get the patch
-        image = self.patches[rows, cols, 0, :, :, :].astype(np.float32)
+        image = self.patchHandler.GetPatchImage(self.bandData, idx).astype(np.float32)
         
         # if transform defined, apply it
         if self.transform:
             image = self.transform(image)
         
-        return image, rows, cols
+        return image, idx

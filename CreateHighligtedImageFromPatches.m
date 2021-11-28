@@ -51,19 +51,12 @@ for f = 1:length(AllFiles)
     load(fullfile(AllFiles(f).folder, AllFiles(f).name));
     
     % create outputs
+    TileCropZone = TileCropZones{idx};
     Prediction = zeros(size(TCI,1), size(TCI,2), 1);
-    for r = 1:size(mucilage, 1)
-        r0 = (r-1) * size(mucilage, 4) + 1;
-        r1 = (r-0) * size(mucilage, 4) - 0;
-        for c = 1:size(mucilage, 2)
-            c0 = (c-1) * size(mucilage, 5) + 1;
-            c1 = (c-0) * size(mucilage, 5) - 0;
-            Prediction(r0:r1, c0:c1) = squeeze(mucilage(r,c,1, :,:));
-        end
-    end
+    Prediction(TileCropZone(2):TileCropZone(4), TileCropZone(1):TileCropZone(3)) = mucilage;
     
     TCIOverlay = HighlightPredictionsOnImage(TCI, Prediction, WaterMask);
-    TCIOverlay = imcrop(TCIOverlay, TileCropZones{idx});
+    TCIOverlay = imcrop(TCIOverlay, TileCropZone);
     
 %     imshow(TCIOverlay, []);
 %     drawnow;
