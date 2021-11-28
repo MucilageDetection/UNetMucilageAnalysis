@@ -5,7 +5,7 @@ import numpy as np
 from patchify import patchify
 
 class SentinelPatchLoader(Dataset):
-    def __init__(self, filepath, filenames, batchCount, loadAtOnce = False, transform=None):
+    def __init__(self, filepath, filenames, batchCount, dataAugmentationTypes, loadAtOnce = False, transform=None):
         # create input image names and mask names
         # S2A_MSIL2A_20210402T085551_N0300_R007_T35TPF_20210402T133128_1
         self.inputs = []
@@ -24,19 +24,37 @@ class SentinelPatchLoader(Dataset):
         
         # think about the transform later
         self.transform = transform
+        self.dataAugmentationTypes = dataAugmentationTypes
 
     def __len__(self):
-        return len(self.inputs)
+        return len(self.inputs) * len(self.dataAugmentationTypes)
 
     def __getitem__(self, idx):
+
+        # rectify the indeces
+        imageIndex =  idx % len(self.inputs)
+
         if self.loadAtOnce:
-            data = self.matfiles[idx]
+            data = self.matfiles[imageIndex]
         else:
-            data = sio.loadmat(self.inputs[idx])
+            data = sio.loadmat(self.inputs[imageIndex])
         
         # load the data file
         image = data['DataI'].astype(np.float32)
         label = data['LabelI'].astype(np.float32)
+        
+        # apply augmentations
+        augmentationType =  self.dataAugmentationTypes[idx // len(self.inputs)]
+        if augmentationType == 'original':
+            pass
+        elif augmentationType == 'vflip':
+            image = np.flip(image, axis=0).copy()
+            label = np.flip(label, axis=0).copy()
+        elif augmentationType == 'hflip':
+            image = np.flip(image, axis=1).copy()
+            label = np.flip(label, axis=1).copy()
+        else:
+            print(f'unknown augmentation type {augmentationType}')
         
         # if transform defined, apply it
         if self.transform:
