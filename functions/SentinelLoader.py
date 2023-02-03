@@ -1,7 +1,7 @@
 from torch.utils.data import Dataset
-import scipy.io as sio
 import os
 import numpy as np
+from MatFileImporter import MatFileImport
 from ImagePatchHandler import ImagePatchHandler
 
 class SentinelPatchLoader(Dataset):
@@ -20,7 +20,7 @@ class SentinelPatchLoader(Dataset):
         # if load at once selected, load at once
         if loadAtOnce:
             for file in self.inputs:
-                self.matfiles.append(sio.loadmat(file))
+                self.matfiles.append(MatFileImport(file))
         
         # think about the transform later
         self.transform = transform
@@ -37,7 +37,7 @@ class SentinelPatchLoader(Dataset):
         if self.loadAtOnce:
             data = self.matfiles[imageIndex]
         else:
-            data = sio.loadmat(self.inputs[imageIndex])
+            data = MatFileImport(self.inputs[imageIndex])
         
         # load the data file
         image = data['DataI'].astype(np.float32)
@@ -67,9 +67,9 @@ class SentinelTestDataset(Dataset):
         # create input image names and mask names
         # S2A_MSIL2A_20210402T085551_N0300_R007_T35TPF_20210402T133128
         self.input = filename
-        BandData = sio.loadmat(self.input)['BandData']
+        BandData = MatFileImport(self.input)['BandData']
         BandData = BandData[cropZone[1]:cropZone[3], cropZone[0]:cropZone[2], :]
-        
+
         # now find all the windows
         self.patchHandler = patchHandler
         self.bandData = self.patchHandler.GetPaddedImage(BandData)

@@ -17,17 +17,31 @@ Eğitim için gerekli girdi görüntüleri, elle işaretlenen imgelerden kesilen
 
 | Katman        | Büyüklük       |
 | ------------- | -------------- |
-| Girdi         | 300            |
-| İlk Katman    | [296](#B1-4)   |
-| Küçültme1     | [144](#B2/2-4) |
-| Küçültme2     | [68](#B3/2-4) |
-| Küçültme3     | [30](#B4/2-4)  |
-| Küçültme4     | [11](#B5/2-4)  |
-| Büyültme1     | [18](#B6*2-4)  |
-| Büyültme2     | [32](#B7*2-4) |
-| Büyültme3     | [60](#B8*2-4) |
-| Büyültme4     | [116](#B9*2-4) |
-| Geçerli Çıktı | [116](#B10)    |
+| Girdi         | 256            |
+| İlk Katman    | [252](#B1-4)   |
+| Küçültme1     | [122](#B2/2-4) |
+| Küçültme2     | [57](#B3/2-4) |
+| Küçültme3     | [24.5](#B4/2-4)  |
+| Küçültme4     | [8.25](#B5/2-4)  |
+| Büyültme1     | [12.5](#B6*2-4)  |
+| Büyültme2     | [21](#B7*2-4) |
+| Büyültme3     | [38](#B8*2-4) |
+| Büyültme4     | [72](#B9*2-4) |
+| Geçerli Çıktı | [72](#B10)    |
+
+| Katman        | Büyüklük       |
+| ------------- | -------------- |
+| Girdi         | 256            |
+| İlk Katman    | [252](#B1)   |
+| Küçültme1     | [122](#(B2-4)/2) |
+| Küçültme2     | [57](#(B3-4)/2) |
+| Küçültme3     | [24.5](#(B4-4)/2)  |
+| Küçültme4     | [24.5](#(B5-4)/2)  |
+| Büyültme1     | [45](#B6*2-4)  |
+| Büyültme2     | [86](#B7*2-4) |
+| Büyültme3     | [168](#B8*2-4) |
+| Büyültme4     | [168](#B9) |
+| Geçerli Çıktı | [168](#B10)    |
 
 Yani bu hesaplamaya göre girdi imgeleri $300 \times 300$ kayan pencereden, $116 \times 116$ adım aralıkları ile kesilerek çıktı üretilmelidir.
 

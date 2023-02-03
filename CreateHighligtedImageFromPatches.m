@@ -8,9 +8,17 @@ MaxAllowedCloudPercentage = 0.01;
 
 InputPath = 'E:\Dropbox\Dataset\satellite\sentinel2\';
 LabeledDataFolder = 'data\labels';
-MucilagePath = 'E:\Dropbox\Education\PhD\Projects\MucilageDetection\uNetLearning\outputs\';
+MucilagePath = 'E:\Dropbox\Education\PhD\Projects\MucilageDetection\uNetLearning\outputs\35TPE\';
+
+scaler = 10 ./ SpatialResolution;
+
 TileNames = {'35TPE'};
-TileCropZones = {[1,1, 4138, 1548]};
+TileCropZones = {[1,1, round(8276 * scaler), round(3096 * scaler)]};
+
+% TileNames = {'35TPF'};
+% TileCropZones = {[1,1, round(10980 * scaler), round(10980 * scaler)]};
+
+MucilageIdentifier = sprintf('_%dm_MUCILAGE.mat',SpatialResolution);
 
 % laod the water masks
 WaterMasks = GetTileWaterMask(LabeledDataFolder, TileNames, SpatialResolution);
@@ -26,8 +34,12 @@ for f = 1:length(AllFiles)
     % set the tile index manually
     idx = 1;
     
+    if ~contains(AllFiles(f).name, MucilageIdentifier)
+        continue;
+    end
+    
     fileSubDir.folder = InputPath;
-    fileSubDir.name = erase(AllFiles(f).name,'_20m_MUCILAGE.mat');
+    fileSubDir.name = erase(AllFiles(f).name,MucilageIdentifier);
     fileSubDir.tile = TileNames{idx};
     
     % get the data
@@ -39,7 +51,13 @@ for f = 1:length(AllFiles)
 
     % check the cloud coverage and ignore too cloudy days
     WaterArea = sum(WaterMask(:));
-    CloudOnWater = SentinelData.CloudMask & WaterMask;
+    
+    % get the cloud region
+    if size(SentinelData.CloudMask, 1) > 0
+        CloudOnWater = SentinelData.CloudMask & WaterMask;
+    else
+        CloudOnWater = zeros(size(WaterMask));
+    end
     CloudOnWaterArea = sum(CloudOnWater(:));
 
     if (CloudOnWaterArea / WaterArea) >= MaxAllowedCloudPercentage
